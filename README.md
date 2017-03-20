@@ -5,7 +5,7 @@ templates. Nothing fancy.
 
 ## Why 'sparkles'?
 
-Naming is hard. Also, there's already an emoji.
+[Naming is hard]. Also, there's already an emoji.
 
 [Naming is hard]: https://twitter.com/edefic/status/843872016109391872
 
