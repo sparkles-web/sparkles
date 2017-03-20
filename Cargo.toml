@@ -1,6 +1,8 @@
 [package]
 name = "sparkles"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["steveklabnik <steve@steveklabnik.com>"]
+description = "✨ is a web \"framework\". We are waiting on hyper 0.11 to release, use a git dependency for now."
+license = "MIT/Apache-2.0"
 
 [dependencies]
