@@ -39,22 +39,14 @@ type BTreeMap = std::collections::BTreeMap<String, Value>;
 mod request;
 use request::Request;
 
-pub struct Response {
-    data: BTreeMap,
-    template: String,
-    status: Status,
-}
+mod response;
+use response::Response;
 
-impl Response {
-    /// just a tiny bit of ergonomics
-    pub fn into_future(self) -> BoxFuture<Response, Error> {
-        futures::future::ok(self).boxed()
-    }
-}
+mod error;
+use error::Error;
 
-pub struct Error {
-    inner: hyper::Error,
-}
+mod status;
+use status::Status;
 
 pub struct ResponseBuilder {
     pub data: BTreeMap,
@@ -86,11 +78,6 @@ impl ResponseBuilder {
             status: self.status.unwrap(),
         }
     }
-}
-
-pub enum Status {
-    Ok,
-    NotFound,
 }
 
 pub struct Server {
