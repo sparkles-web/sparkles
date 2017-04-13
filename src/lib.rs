@@ -36,9 +36,8 @@ use serde_json::value::Value;
 // Rename type for crate
 type BTreeMap = std::collections::BTreeMap<String, Value>;
 
-pub struct Request {
-    request: hyper::server::Request,
-}
+mod request;
+use request::Request;
 
 pub struct Response {
     data: BTreeMap,
