@@ -240,7 +240,7 @@ impl Service for Server {
             if raw != &b"https"[..] {
                 return ::futures::future::ok(
                     hyper::server::Response::new()
-                    .with_header(Location(format!("https://thanks.rust-lang.org{}", req.path())))
+                    .with_header(Location::new(format!("https://thanks.rust-lang.org{}", req.path())))
                     .with_status(StatusCode::MovedPermanently)
                 ).boxed();
             }
