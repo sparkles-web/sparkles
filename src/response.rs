@@ -7,7 +7,7 @@ use status::Status;
 
 use std;
 // Rename type for crate
-type BTreeMap = std::collections::BTreeMap<String, Value>;
+pub type BTreeMap = std::collections::BTreeMap<String, Value>;
 
 use serde_json::value::Value;
 
