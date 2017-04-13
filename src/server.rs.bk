@@ -47,8 +47,7 @@ impl Server {
             let path = entry.path();
             let name = path.file_stem().unwrap().to_str().unwrap();
 
-            handlebars
-                .register_template_file(name, &path)
+            handlebars.register_template_file(name, &path)
                 .ok()
                 .unwrap();
         }
@@ -65,31 +64,23 @@ impl Server {
     pub fn add_route(&mut self, path: &str, handler: fn(Request) -> BoxFuture<Response, Error>) {
         let path = path.to_string();
 
-        self.routes
-            .push(
-                Route::Literal {
-                    path: path,
-                    handler: handler,
-                },
-            );
+        self.routes.push(Route::Literal {
+            path: path,
+            handler: handler,
+        });
     }
 
-    pub fn add_regex_route(
-        &mut self,
-        regex: &str,
-        handler: fn(&Request, Captures) -> BoxFuture<Response, Error>,
-    ) {
-        self.routes
-            .push(
-                Route::Regex {
-                    regex: Regex::new(regex).unwrap(),
-                    handler: handler,
-                },
-            );
+    pub fn add_regex_route(&mut self, regex: &str, handler: fn(&Request, Captures) -> BoxFuture<Response, Error>) {
+        self.routes.push(Route::Regex {
+            regex: Regex::new(regex).unwrap(),
+            handler: handler,
+        });
     }
 
     pub fn add_catch_all_route(&mut self, handler: fn(Request) -> BoxFuture<Response, Error>) {
-        self.catch_all_route = Some(Route::CatchAll { handler: handler });
+        self.catch_all_route = Some(Route::CatchAll {
+            handler: handler,
+        });
     }
 
     pub fn run(self, addr: &SocketAddr) {
@@ -117,8 +108,7 @@ impl Service for Server {
             if raw != &b"https"[..] {
                 return ::futures::future::ok(
                     hyper::server::Response::new()
-                    .with_header(Location::new(format!("https://thanks.rust-lang.org{}",
-                         req.path())))
+                    .with_header(Location::new(format!("https://thanks.rust-lang.org{}", req.path())))
                     .with_status(StatusCode::MovedPermanently)
                 ).boxed();
             }
@@ -130,32 +120,27 @@ impl Service for Server {
         // ... you trying to do something bad?
         if fs_path.contains("./") || fs_path.contains("../") {
             // GET OUT
-            return ::futures::future::ok(
-                hyper::server::Response::new()
-                    .with_header(ContentType::html())
-                    .with_status(StatusCode::NotFound),
-            )
-                           .boxed();
+            return ::futures::future::ok(hyper::server::Response::new()
+                .with_header(ContentType::html())
+                .with_status(StatusCode::NotFound))
+                .boxed();
         }
 
         if Path::new(&fs_path).is_file() {
-            return self.pool
-                       .spawn_fn(
-                move || {
-                    let mut f = File::open(&fs_path).unwrap();
+            return self.pool.spawn_fn(move || {
+                let mut f = File::open(&fs_path).unwrap();
 
-                    let mut source = Vec::new();
+                let mut source = Vec::new();
 
-                    f.read_to_end(&mut source).unwrap();
+                f.read_to_end(&mut source).unwrap();
 
-                    futures::future::ok(hyper::server::Response::new().with_body(source))
-                },
-            )
-                       .boxed();
+                futures::future::ok(hyper::server::Response::new()
+                    .with_body(source))
+            }).boxed();
         }
 
         // next, we check routes
-
+        
         for route in &self.routes {
             if route.matches(req.path()) {
                 let handlebars = self.handlebars.clone();
@@ -168,11 +153,8 @@ impl Service for Server {
             return h.render_with(req, handlebars);
         }
 
-        ::futures::future::ok(
-            hyper::server::Response::new()
-                .with_header(ContentType::html())
-                .with_status(StatusCode::NotFound),
-        )
-                .boxed()
+        ::futures::future::ok(hyper::server::Response::new()
+                            .with_header(ContentType::html())
+                            .with_status(StatusCode::NotFound)).boxed()
     }
 }
