@@ -5,9 +5,9 @@ use futures::BoxFuture;
 use error::Error;
 use status::Status;
 
-use std;
+use std::collections;
 // Rename type for crate
-pub type BTreeMap = std::collections::BTreeMap<String, Value>;
+pub type BTreeMap = collections::BTreeMap<String, Value>;
 
 use serde_json::value::Value;
 
