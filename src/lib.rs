@@ -14,7 +14,14 @@ mod request;
 mod response;
 mod error;
 mod status;
+mod server;
+mod route;
+mod response_builder;
 
-pub mod server;
-pub mod route;
-pub mod response_builder;
+pub use request::Request;
+pub use response::Response;
+pub use error::Error;
+pub use status::Status;
+pub use server::Server;
+pub use route::Route;
+pub use response_builder::ResponseBuilder;
