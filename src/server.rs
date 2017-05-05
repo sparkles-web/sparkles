@@ -20,7 +20,7 @@ use futures_cpupool::CpuPool;
 
 use hyper;
 use hyper::StatusCode;
-use hyper::header::{ContentType, Location};
+use hyper::header::{ContentType, Host, Location};
 use hyper::server::{Http, Service};
 
 use handlebars::Handlebars;
@@ -115,9 +115,11 @@ impl Service for Server {
         // from http://jaketrent.com/post/https-redirect-node-heroku/
         if let Some(raw) = req.headers().get_raw("x-forwarded-proto") {
             if raw != &b"https"[..] {
+                let host: &Host = req.headers().get().unwrap();
                 return ::futures::future::ok(
                     hyper::server::Response::new()
-                    .with_header(Location::new(format!("https://thanks.rust-lang.org{}",
+                    .with_header(Location::new(format!("https://{}{}",
+                         host,
                          req.path())))
                     .with_status(StatusCode::MovedPermanently)
                 ).boxed();
