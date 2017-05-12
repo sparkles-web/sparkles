@@ -93,14 +93,17 @@ impl Server {
     }
 
     pub fn run(self, addr: &SocketAddr) {
+        self.run_until(addr, futures::future::empty());
+    }
+
+    pub fn run_until<F>(self, addr: &SocketAddr, shutdown_signal: F) where F: Future<Item=(), Error=()> {
         info!(self.log, "Starting server, listening on http://{}", addr);
 
         let a = Arc::new(self);
 
         let server = Http::new().bind(addr, move || Ok(a.clone())).unwrap();
 
-
-        server.run().unwrap();
+        server.run_until(shutdown_signal).unwrap();
     }
 }
 
