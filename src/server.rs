@@ -39,10 +39,22 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn new(template_root: String) -> Server {
+    /// Construct a `Server`.
+    ///
+    /// Use a path name to create a Server.  The path holds template files used as a view.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # fn run () -> Result <(), sparkles::Error> {
+    /// let mut server = sparkles::Server::new("templates");
+    /// # }
+    /// ```
+    ///
+    pub fn new<S: Into<String>>(template_root: S) -> Server {
         let mut handlebars = Handlebars::new();
 
-        for entry in fs::read_dir(&template_root).unwrap() {
+        for entry in fs::read_dir(&template_root.into()).unwrap() {
             let entry = entry.unwrap();
             let path = entry.path();
             let name = path.file_stem().unwrap().to_str().unwrap();
