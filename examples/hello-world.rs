@@ -14,7 +14,7 @@ use serde_json::value::Value;
 
 fn main() {
     let addr = String::from("0.0.0.0:7878").parse().unwrap();
-    let mut server = sparkles::Server::new("templates".to_string());
+    let mut server = sparkles::Server::new("templates");
 
     server.add_route("/", root);
 
@@ -23,7 +23,7 @@ fn main() {
 
 fn root(_: Request) -> BoxFuture<Response, Error> {
     let mut res = ResponseBuilder::new();
-    res.with_template("hello-world".to_string());
+    res.with_template("hello-world");
 
     let name = Value::String(String::from("sparkles"));
     res.data.insert("name".to_string(), name);

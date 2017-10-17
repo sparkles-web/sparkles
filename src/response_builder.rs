@@ -17,8 +17,8 @@ impl ResponseBuilder {
         }
     }
 
-    pub fn with_template(&mut self, template: String) {
-        self.template = Some(template);
+    pub fn with_template<S: Into<String>>(&mut self, template: S) {
+        self.template = Some(template.into());
     }
 
     pub fn with_status(&mut self, status: Status) {
