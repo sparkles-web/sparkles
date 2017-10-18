@@ -1,27 +1,25 @@
-extern crate futures;
-extern crate hyper;
-extern crate regex;
-extern crate reqwest;
-extern crate serde_json;
-extern crate handlebars;
-extern crate futures_cpupool;
+extern crate simple_server;
 
-#[macro_use]
-extern crate slog;
-extern crate slog_term;
+pub use simple_server::{Request, Response, ResponseBuilder, Error};
 
-mod request;
-mod response;
-mod error;
-mod status;
-mod server;
-mod route;
-mod response_builder;
+pub type Handler = fn(Request<&[u8]>, ResponseBuilder) -> Result<Response<&[u8]>, Error>;
 
-pub use request::Request;
-pub use response::Response;
-pub use error::Error;
-pub use status::Status;
-pub use server::Server;
-pub use route::Route;
-pub use response_builder::ResponseBuilder;
+pub struct App {
+    server: Option<simple_server::Server>,
+}
+
+
+impl App {
+    pub fn new() -> App {
+        App { server: None }
+    }
+
+    pub fn get(&mut self, _path: &str, handler: Handler) {
+        self.server = Some(simple_server::Server::new(handler));
+    }
+
+    pub fn listen(self, host: &str, port: &str, _hook: fn()) {
+        _hook(); // eventually pass this through when simple-server gains it
+        self.server.map(|server| { server.listen(host, port); });
+    }
+}

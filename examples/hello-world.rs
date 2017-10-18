@@ -1,34 +1,13 @@
 extern crate sparkles;
-extern crate futures;
-extern crate serde_json;
 
-use sparkles::Request;
-use sparkles::Response;
-use sparkles::Error;
-use sparkles::ResponseBuilder;
-use sparkles::Status;
-
-use futures::BoxFuture;
-
-use serde_json::value::Value;
+use sparkles::App;
 
 fn main() {
-    let addr = String::from("0.0.0.0:7878").parse().unwrap();
-    let mut server = sparkles::Server::new("templates");
+    let mut app = App::new();
 
-    server.add_route("/", root);
+    app.get("/", |_req, mut res| Ok(res.body("Hello Rust!".as_bytes())?));
 
-    server.run(&addr);
-}
-
-fn root(_: Request) -> BoxFuture<Response, Error> {
-    let mut res = ResponseBuilder::new();
-    res.with_template("hello-world");
-
-    let name = Value::String(String::from("sparkles"));
-    res.data.insert("name".to_string(), name);
-
-    res.with_status(Status::Ok);
-
-    res.to_response().into_future()
+    app.listen("127.0.0.1", "3000", || {
+        println!("Example app listening on port 3000!");
+    });
 }
