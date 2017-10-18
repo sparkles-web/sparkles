@@ -20,6 +20,6 @@ impl App {
 
     pub fn listen(self, host: &str, port: &str, _hook: fn()) {
         _hook(); // eventually pass this through when simple-server gains it
-        self.server.map(|server| { server.listen(host, port); });
+        self.server.map(|server| server.listen(host, port));
     }
 }
