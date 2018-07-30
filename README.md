@@ -11,9 +11,6 @@ templates. Nothing fancy.
 
 ## How do I use this?
 
-It's not really ready for you to use yet, exactly. Check out the source of
-[thanks] as a small application.
+It's not really ready for you to use yet, exactly.
 
 There will be good docs when this is ready to use.
-
-[thanks]: http://github.com/rust-lang-nursery/thanks
