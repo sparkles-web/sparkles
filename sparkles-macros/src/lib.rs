@@ -1,12 +1,19 @@
-#![feature(async_await, await_macro, futures_api, pin, use_extern_macros)]
-
+#![feature(
+    async_await,
+    await_macro,
+    futures_api,
+    pin,
+    use_extern_macros
+)]
 #![feature(rust_2018_preview)]
 #![warn(rust_2018_idioms)]
 
 use proc_macro::TokenStream;
+use quote::{
+    multi_zip_expr, nested_tuples_pat, pounded_var_names, quote, quote_each_token, quote_spanned,
+};
 use std::cell::RefCell;
 use syn::*;
-use quote::{quote, quote_spanned, quote_each_token, pounded_var_names, nested_tuples_pat, multi_zip_expr};
 
 thread_local! {
     static ROUTES: RefCell<Vec<String>> = RefCell::new(Vec::new());
@@ -24,20 +31,16 @@ pub fn server(_attr: TokenStream, input: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn route(_attr: TokenStream, function: TokenStream) -> TokenStream {
-        let ItemFn {
-                ident,
-                block,
-                decl,
-                ..
-            } = match syn::parse(function.clone()).expect("failed to parse tokens as a function") {
-                Item::Fn(item) => item,
-                _ => panic!("#[route] can only be applied to functions"),
-        };
+    let ItemFn {
+        ident, block, decl, ..
+    } = match syn::parse(function.clone()).expect("failed to parse tokens as a function") {
+        Item::Fn(item) => item,
+        _ => panic!("#[route] can only be applied to functions"),
+    };
 
     ROUTES.with(|f| {
         f.borrow_mut().push(ident.to_string());
     });
-
 
     let inputs = decl.inputs;
     let output = decl.output;
@@ -53,15 +56,12 @@ pub fn route(_attr: TokenStream, function: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn not_found(_attr: TokenStream, function: TokenStream) -> TokenStream {
-        let ItemFn {
-                ident,
-                block,
-                decl,
-                ..
-            } = match syn::parse(function.clone()).expect("failed to parse tokens as a function") {
-                Item::Fn(item) => item,
-                _ => panic!("#[route] can only be applied to functions"),
-        };
+    let ItemFn {
+        ident, block, decl, ..
+    } = match syn::parse(function.clone()).expect("failed to parse tokens as a function") {
+        Item::Fn(item) => item,
+        _ => panic!("#[route] can only be applied to functions"),
+    };
 
     NOT_FOUND_ROUTE.with(|f| {
         *f.borrow_mut() = Some(ident.to_string());
@@ -83,7 +83,7 @@ pub fn not_found(_attr: TokenStream, function: TokenStream) -> TokenStream {
 pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
     // let input2: DeriveInput = syn::parse(input).unwrap();
 
-//    println!("serve input: {:?}\n", input);
+    //    println!("serve input: {:?}\n", input);
     ROUTES.with(|f| {
         println!("here's the routes i know about: ");
 
@@ -130,16 +130,13 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
     */
 
     let ItemFn {
-            ident,
-            block,
-            decl,
-            ..
-        } = match syn::parse(function.clone()).expect("failed to parse tokens as a function") {
-            Item::Fn(item) => item,
-            _ => panic!("#[serve] can only be applied to functions"),
+        ident, block, decl, ..
+    } = match syn::parse(function.clone()).expect("failed to parse tokens as a function") {
+        Item::Fn(item) => item,
+        _ => panic!("#[serve] can only be applied to functions"),
     };
 
-    let statements = block.stmts; 
+    let statements = block.stmts;
 
     let tokens = quote! {
         fn main() {
