@@ -1,16 +1,2 @@
-cargo-features = ["edition"]
-
-[package]
-name = "sparkles"
-version = "0.1.0"
-authors = ["steveklabnik <steve@steveklabnik.com>"]
-description = "✨ is a web framework"
-license = "MIT/Apache-2.0"
-edition = "2018"
-
-[dependencies.simple-server]
-#git = "https://github.com/steveklabnik/simple-server"
-path = "../simple-server"
-
-[dependencies]
-futures-preview = "0.3.0-alpha.2"
+[workspace]
+members = ["sparkles", "sparkles-macros"]

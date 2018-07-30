@@ -1,0 +1,18 @@
+cargo-features = ["edition"]
+
+[package]
+name = "sparkles-macros"
+version = "0.1.0"
+authors = ["steveklabnik <steve@steveklabnik.com>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+#syn = "0.14.5"
+quote = "0.6.4"
+
+[dependencies.syn]
+version = "0.14.5"
+features = ["full"]
