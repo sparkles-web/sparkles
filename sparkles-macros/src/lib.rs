@@ -22,10 +22,6 @@ thread_local! {
 
 #[proc_macro_attribute]
 pub fn server(_attr: TokenStream, input: TokenStream) -> TokenStream {
-    // let input2: DeriveInput = syn::parse(input).unwrap();
-
-    // println!("server input: {:?}\n", input);
-
     input
 }
 
@@ -81,9 +77,6 @@ pub fn not_found(_attr: TokenStream, function: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
-    // let input2: DeriveInput = syn::parse(input).unwrap();
-
-    //    println!("serve input: {:?}\n", input);
     ROUTES.with(|f| {
         println!("here's the routes i know about: ");
 
@@ -100,34 +93,6 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
             _ => {}
         }
     });
-
-    // we need to generate this:
-    /*
-    fn main() {
-        let host = "127.0.0.1"; // THEIR CODE
-        let port = "7878"; // THEIR CODE
-
-        let server = Server;  // THEIR CODE
-
-        let simple_server = simple_server::Server::new(move |request, response| {
-            println!("Request received. {} {}", request.method(), request.uri());
-
-            // futures::executor::block_on(route(&self, request, response))
-            futures::executor::block_on(async {
-                match (request.method(), request.uri().path()) {
-                    (&Method::GET, "/hello") => {
-                        await!(server.hello(response))
-                    }
-                    (_, _) => {
-                        await!(server.four_oh_four(response))
-                    }
-                }
-            })
-        });
-
-        simple_server.listen(host, port);
-    }
-    */
 
     let ItemFn {
         ident, block, decl, ..
