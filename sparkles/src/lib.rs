@@ -15,7 +15,19 @@ pub extern crate futures;
 
 pub use simple_server::{Method, StatusCode, Builder, ResponseResult};
 
+pub trait Response {
+    fn to_response_result(self) -> ResponseResult;
+}
+
+impl Response for &'static str {
+    fn to_response_result(self) -> ResponseResult {
+        let mut response = Builder::new();
+
+        Ok(response.body(self.as_bytes().to_vec())?)
+    }
+}
+
 pub mod prelude {
-    pub use crate::{Method, StatusCode, Builder, ResponseResult};
+    pub use crate::{Method, StatusCode, Builder, ResponseResult, Response};
     pub use sparkles_macros::*;
 }

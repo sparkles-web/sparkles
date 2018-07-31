@@ -134,7 +134,7 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
 
             routes.push(quote! {
                 (&Method::#method, #path) => {
-                    await!(server.#name(response))
+                    await!(server.#name(response)).to_response_result()
                 }
             });
         }
@@ -153,7 +153,7 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
 
                 not_found_route = quote! {
                     (_, _) => {
-                        await!(server.#route(response))
+                        await!(server.#route(response)).to_response_result();
                     }
                 };
             }
