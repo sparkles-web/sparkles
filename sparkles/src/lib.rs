@@ -29,8 +29,6 @@ impl Response for &'static str {
 
 impl<E> Response for Result<simple_server::Response<Vec<u8>>, E> where E: std::fmt::Display {
     fn to_response_result(self) -> ResponseResult {
-        let mut response = Builder::new();
-
         match self {
             Ok(o) => {
                 Ok(o)

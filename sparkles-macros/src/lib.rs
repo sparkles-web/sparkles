@@ -147,7 +147,7 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
 
             routes.push(quote! {
                 (&Method::#method, #path) => {
-                    await!(self.#name(response)).to_response_result()
+                    await!(self.#name()).to_response_result()
                 }
             });
         }
@@ -166,7 +166,7 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
 
                 not_found_route = quote! {
                     (_, _) => {
-                        await!(self.#route(response)).to_response_result();
+                        await!(self.#route()).to_response_result();
                     }
                 };
             }
@@ -194,7 +194,7 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
                 main = quote! {
                     impl #name {
                         fn listen(self, host: &str, port: &str) -> ! {
-                            let simple_server = sparkles::simple_server::Server::new(move |request, response| {
+                            let simple_server = sparkles::simple_server::Server::new(move |request, _response| {
                                 println!("Request received. {} {}", request.method(), request.uri());
 
                                 sparkles::futures::executor::block_on(async {

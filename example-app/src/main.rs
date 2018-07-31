@@ -15,12 +15,12 @@ struct Server;
 
 impl Server {
     #[route(GET, "/hello")]
-    fn hello(&self, response: Builder) -> impl Response {
+    fn hello(&self) -> impl Response {
         "<h1>Hello Rust</h1>"
     }
 
     #[route(GET, "/error")]
-    fn oh_no(&self, response: Builder) -> impl Response {
+    fn oh_no(&self) -> impl Response {
         Err("<h1>500</h1><p>Oh no!</p>")
     }
 }
