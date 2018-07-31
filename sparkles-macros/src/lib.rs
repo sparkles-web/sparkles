@@ -160,7 +160,9 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
             None => {
                 not_found_route = quote! {
                     (_, _) => {
-                        await!(server.four_oh_four(response))
+                        let mut response = sparkles::simple_server::Builder::new();
+                        response.status(StatusCode::NOT_FOUND);
+                        Ok(response.body("<h1>404</h1><p>Not found!<p>".as_bytes().to_vec())?)
                     }
                 };
             }
