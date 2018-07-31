@@ -1,2 +1,2 @@
 [workspace]
-members = ["sparkles", "sparkles-macros"]
+members = ["sparkles", "sparkles-macros", "example-app"]

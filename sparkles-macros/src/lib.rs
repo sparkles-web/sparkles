@@ -171,10 +171,10 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
         fn main() {
             #(#statements)*
 
-            let simple_server = simple_server::Server::new(move |request, response| {
+            let simple_server = sparkles::simple_server::Server::new(move |request, response| {
                 println!("Request received. {} {}", request.method(), request.uri());
 
-                futures::executor::block_on(async {
+                sparkles::futures::executor::block_on(async {
                     match (request.method(), request.uri().path()) {
                         #(#routes)*
                         #not_found_route
