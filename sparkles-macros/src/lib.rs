@@ -1,3 +1,4 @@
+#![recursion_limit="128"]
 #![feature(
     async_await,
     await_macro,
@@ -27,10 +28,22 @@ struct Route {
 thread_local! {
     static ROUTES: RefCell<Vec<Route>> = RefCell::new(Vec::new());
     static NOT_FOUND_ROUTE: RefCell<Option<String>> = RefCell::new(None);
+    static SERVER_NAME: RefCell<Option<proc_macro2::Ident>> = RefCell::new(None);
 }
 
 #[proc_macro_attribute]
 pub fn server(_attr: TokenStream, input: TokenStream) -> TokenStream {
+    let ItemStruct {
+        ident, ..
+    } = match syn::parse(input.clone()).expect("failed to parse tokens as a struct") {
+        Item::Struct(item) => item,
+        _ => panic!("#[server] can only be applied to structs"),
+    };
+
+    SERVER_NAME.with(|name| {
+        *name.borrow_mut() = Some(ident);
+    });
+
     input
 }
 
@@ -134,7 +147,7 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
 
             routes.push(quote! {
                 (&Method::#method, #path) => {
-                    await!(server.#name(response)).to_response_result()
+                    await!(self.#name(response)).to_response_result()
                 }
             });
         }
@@ -153,7 +166,7 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
 
                 not_found_route = quote! {
                     (_, _) => {
-                        await!(server.#route(response)).to_response_result();
+                        await!(self.#route(response)).to_response_result();
                     }
                 };
             }
@@ -169,24 +182,42 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
         }
     });
 
-    let tokens = quote! {
-        fn main() {
-            #(#statements)*
+    // rustc is not smart enough to realize that this is initalized once
+    // or maybe it's smarter than me, who knows.
+    let mut main = quote! {};
 
-            let simple_server = sparkles::simple_server::Server::new(move |request, response| {
-                println!("Request received. {} {}", request.method(), request.uri());
+    SERVER_NAME.with(|f| {
+        let f = f.borrow();
 
-                sparkles::futures::executor::block_on(async {
-                    match (request.method(), request.uri().path()) {
-                        #(#routes)*
-                        #not_found_route
+        match &*f {
+            Some(name) => {
+                main = quote! {
+                    impl #name {
+                        fn listen(self, host: &str, port: &str) -> ! {
+                            let simple_server = sparkles::simple_server::Server::new(move |request, response| {
+                                println!("Request received. {} {}", request.method(), request.uri());
+
+                                sparkles::futures::executor::block_on(async {
+                                    match (request.method(), request.uri().path()) {
+                                        #(#routes)*
+                                        #not_found_route
+                                    }
+                                })
+                            });
+
+                            simple_server.listen(host, port);
+                        }
                     }
-                })
-            });
 
-            simple_server.listen(host, port);
+                    fn main() {
+                        #(#statements)*
+                    }
+                };
+            }
+            None => panic!("You must declare a #[server]"),
         }
-    };
 
-    tokens.into()
+    });
+
+    main.into()
 }

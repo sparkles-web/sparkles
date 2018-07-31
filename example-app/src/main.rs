@@ -26,4 +26,6 @@ fn main() {
     let port = "7878";
 
     let server = Server;
+
+    server.listen(host, port);
 }
