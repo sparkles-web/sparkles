@@ -19,4 +19,5 @@ version = "0.14.5"
 features = ["full", "extra-traits"]
 
 [dependencies.simple-server]
-git = "https://github.com/steveklabnik/simple-server"
+#git = "https://github.com/steveklabnik/simple-server"
+path = "../../simple-server"
