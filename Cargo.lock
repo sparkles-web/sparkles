@@ -220,7 +220,9 @@ dependencies = [
 name = "sparkles-macros"
 version = "0.1.0"
 dependencies = [
+ "proc-macro2 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "quote 0.6.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "simple-server 0.3.0 (git+https://github.com/steveklabnik/simple-server)",
  "syn 0.14.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

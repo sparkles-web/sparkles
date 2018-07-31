@@ -15,10 +15,17 @@ use sparkles_macros::{not_found, route, serve, server};
 struct Server;
 
 impl Server {
-    #[route]
+    #[route(GET, "/hello")]
     fn hello(&self, mut response: simple_server::Builder) -> simple_server::ResponseResult {
         Ok(response
             .body("<h1>Hi!</h1><p>Hello Rust!</p>".as_bytes().to_vec())
+            .unwrap())
+    }
+
+    #[route(GET, "/lol")]
+    fn bar(&self, mut response: simple_server::Builder) -> simple_server::ResponseResult {
+        Ok(response
+            .body("<h1>Hi!</h1><p>Hellololol</p>".as_bytes().to_vec())
             .unwrap())
     }
 

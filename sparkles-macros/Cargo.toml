@@ -12,7 +12,11 @@ proc-macro = true
 [dependencies]
 #syn = "0.14.5"
 quote = "0.6.4"
+proc-macro2 = "0.4.9"
 
 [dependencies.syn]
 version = "0.14.5"
 features = ["full", "extra-traits"]
+
+[dependencies.simple-server]
+git = "https://github.com/steveklabnik/simple-server"
