@@ -140,6 +140,33 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
         }
     });
 
+    // rustc is not smart enough to realize that this is initalized once
+    // or maybe it's smarter than me, who knows.
+    let mut not_found_route = quote! {};
+
+    NOT_FOUND_ROUTE.with(|f| {
+        let f = f.borrow();
+
+        match &*f {
+            Some(route) => {
+                let route = Ident::new(route, proc_macro2::Span::call_site());
+
+                not_found_route = quote! {
+                    (_, _) => {
+                        await!(server.#route(response))
+                    }
+                };
+            }
+            None => {
+                not_found_route = quote! {
+                    (_, _) => {
+                        await!(server.four_oh_four(response))
+                    }
+                };
+            }
+        }
+    });
+
     let tokens = quote! {
         fn main() {
             #(#statements)*
@@ -150,9 +177,7 @@ pub fn serve(_attr: TokenStream, function: TokenStream) -> TokenStream {
                 futures::executor::block_on(async {
                     match (request.method(), request.uri().path()) {
                         #(#routes)*
-                        (_, _) => {
-                            await!(server.four_oh_four(response))
-                        }
+                        #not_found_route
                     }
                 })
             });
